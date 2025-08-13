@@ -61,12 +61,4 @@ public class SessionAuthController {
 
         return ResponseEntity.ok("註冊成功");
     }
-//    @PostMapping
-//    public ResponseEntity<GetUserResponse> createUser(@RequestBody CreateUserRequest request) {
-//        User user = new User();
-//        user.setUsername(request.getUsername());
-//        user.setEmail(request.getEmail());
-//        User savedUser = userRepository.save(user);
-//        return ResponseEntity.status(201).body(new GetUserResponse(savedUser));
-//    }
 }
