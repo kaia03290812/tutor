@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
+
 @RestController
 @RequestMapping("/session")
 @CrossOrigin("*")
@@ -20,33 +21,37 @@ public class SessionAuthController {
     private final UserRepository userRepository;
 
     @Autowired
-    public  SessionAuthController(UserService userService, UserRepository userRepository){
-        this.userService=userService;
-        this.userRepository=userRepository;
+    public SessionAuthController(UserService userService, UserRepository userRepository) {
+        this.userService = userService;
+        this.userRepository = userRepository;
     }
+
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody LoginRequest request, HttpSession session){
-        Optional<User>user =userService.findByUsernameAndPassword(request.getUsername(),request.getPassword());
-      if (user.isPresent()){
-          session.setAttribute("userId",user.get().getId());
-          return ResponseEntity.ok(user.get());
-      }
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<User> login(@RequestBody LoginRequest request, HttpSession session) {
+        Optional<User> user = userService.findByUsernameAndPassword(request.getUsername(), request.getPassword());
+        if (user.isPresent()) {
+            session.setAttribute("userId", user.get().getId());
+            return ResponseEntity.ok(user.get());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
     @GetMapping("/profile")
-    public ResponseEntity<User>getProfile(HttpSession session){
+    public ResponseEntity<User> getProfile(HttpSession session) {
         Integer userId = (Integer) session.getAttribute("userId");
-        if (userId==null){
+        if (userId == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<User>user =userRepository.findById(userId);
+        Optional<User> user = userRepository.findById(userId);
         return ResponseEntity.ok(user.get());
     }
+
     @PostMapping("/logout")
-    public ResponseEntity<User> logout(HttpSession session){
-     session.invalidate();
-     return  ResponseEntity.ok().build();
+    public ResponseEntity<User> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok().build();
     }
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         Optional<User> existingUser = userRepository.findByUsername(request.getUsername());
@@ -58,7 +63,6 @@ public class SessionAuthController {
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
         userRepository.save(user);
-
         return ResponseEntity.ok("註冊成功");
     }
 }
